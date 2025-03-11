@@ -15,6 +15,16 @@
             <artifactId>json</artifactId>
             <version>20240303</version>
         </dependency>
+        <dependency>
+            <groupId>telran.monitoring</groupId>
+            <artifactId>middleware-data-streams-impl</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>telran.monitoring</groupId>
+            <artifactId>pulse-monitoring-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--
 		https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
         <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb -->
