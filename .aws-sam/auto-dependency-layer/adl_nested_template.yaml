@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS SAM CLI Nested Stack for Auto Dependency Layer Creation
+Metadata:
+  SamCliInfo: 1.135.0
+  key: AWS SAM CLI sync command
+Outputs:
+  JumpRecognizerFunction3a271a78DepLayer:
+    Value:
+      Ref: JumpRecognizerFunction3a271a78DepLayer
+  PulseValuesReducerFunctioncfd30f6dDepLayer:
+    Value:
+      Ref: PulseValuesReducerFunctioncfd30f6dDepLayer
+Resources:
+  JumpRecognizerFunction3a271a78DepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - java21
+      ContentUri: C:\Users\danie\OneDrive\Documentos\Beersheva24\pulse-monitoring\.aws-sam\auto-dependency-layer\JumpRecognizerFunction3a271a78DepLayer
+      Description: Auto created layer for dependencies of function JumpRecognizerFunction
+      LayerName: pulseMonitoringbeabc141-JumpRecognizerFunction3a271a78-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+  PulseValuesReducerFunctioncfd30f6dDepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - java21
+      ContentUri: C:\Users\danie\OneDrive\Documentos\Beersheva24\pulse-monitoring\.aws-sam\auto-dependency-layer\PulseValuesReducerFunctioncfd30f6dDepLayer
+      Description: Auto created layer for dependencies of function PulseValuesReducerFunction
+      LayerName: pulseMonitoringbeabc141-PulseValuesReducerFunccfd30f6d-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+Transform: AWS::Serverless-2016-10-31

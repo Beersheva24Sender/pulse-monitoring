@@ -18,11 +18,12 @@ Resources:
           - Effect: Allow
             Resource: '*' 
             Action:
-            - dynamodb*
+            - dynamodb:*
       Environment:
         Variables:
           LOGGER_LEVEL: finest
-
+          STREAM_NAME: !Ref JumpDataStream
+          STREAM_CLASS_NAME: telran.monitoring.DynamoDbStreamJumpPulseData
       Events:
         DynamoDbItemInsert:
           Type: DynamoDB
@@ -33,9 +34,39 @@ Resources:
             FilterCriteria:
               Filters:
               - Pattern: '{"eventName": ["INSERT"]}'
+  PulseValuesReducerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: pulse-values-reducer
+      Handler: telran.monitoring.AppReducer::handleRequest
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Resource: '*' 
+            Action:
+            - dynamodb:*
+      Environment:
+        Variables:
+          LOGGER_LEVEL: finest
+          STREAM_NAME: !Ref AvgValuesDataStream
+          REDUCING_SIZE: 5
+          REDUCING_TIME_WINDOW: 600000
+          STREAM_CLASS_NAME: telran.monitoring.DynamoDbStreamSensorData
+      Events:
+        DynamoDbItemInsert:
+          Type: DynamoDB
+          Properties:
+            StartingPosition: LATEST
+            BatchSize: 1
+            Stream: !GetAtt PulseValuesStream.StreamArn
+            FilterCriteria:
+              Filters:
+              - Pattern: '{"eventName": ["INSERT"]}'
+            
   PulseValuesStream:
     Type: AWS::DynamoDB::Table
     Properties:
+      TableName: pulse_values
       KeySchema:
         - AttributeName: patientId
           KeyType: HASH
@@ -47,8 +78,8 @@ Resources:
         - AttributeName: timestamp
           AttributeType: N
       ProvisionedThroughput:
-        ReadCapacityUnits: 0
-        WriteCapacityUnits: 0
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
       StreamSpecification:
         StreamViewType: NEW_IMAGE
   JumpDataStream:
@@ -65,7 +96,25 @@ Resources:
         - AttributeName: timestamp
           AttributeType: N     
       ProvisionedThroughput:
-        ReadCapacityUnits: 0
-        WriteCapacityUnits: 0
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
       StreamSpecification:
-        StreamViewType: NEW_IMAGE  
+        StreamViewType: NEW_IMAGE
+  AvgValuesDataStream:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: patientId
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: patientId
+          AttributeType: N
+        - AttributeName: timestamp
+          AttributeType: N     
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE        
